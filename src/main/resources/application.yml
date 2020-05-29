@@ -1,6 +1,6 @@
 micronaut:
   application:
-    name: eureka
+    name: service-discovery-eureka
 eureka:
   client:
     registration:
