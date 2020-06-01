@@ -1,8 +1,19 @@
-## Feature http-client documentation
+# Micronaut Service Discovery Eureka and Http Client #
 
-- [Micronaut Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
+Test application for Micronaut and GraalVM that uses:
 
-## Feature discovery-eureka documentation
+- `HelloWorld` controller that returns `Hello ${name}` as a String.
+- Eureka as service discovery.
+- Http `@Client` pointing to the same application
+- `GatewayController` that uses the Http Client to call itself through the network.
 
-- [Micronaut Eureka Service Discovery documentation](https://docs.micronaut.io/latest/guide/index.html#serviceDiscoveryEureka)
+Start Eureka Server:
 
+```bash
+docker run -it --rm -p 8761:8761 registry.gitlab.com/micronaut-projects/micronaut-graal-tests/eureka-server
+```
+
+```bash
+curl localhost:8080/hello/Micronaut
+curl localhost:8080/api/hello/Micronaut
+```
