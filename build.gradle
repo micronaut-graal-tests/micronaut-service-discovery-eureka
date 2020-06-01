@@ -66,8 +66,6 @@ tasks.withType(JavaCompile) {
         // enables incremental compilation
         '-Amicronaut.processing.incremental=true',
         '-Amicronaut.processing.annotations=example.micronaut.*',
-        '-Amicronaut.processing.group=example.micronaut',
-        '-Amicronaut.processing.module=eureka',
     ])
 }
 
