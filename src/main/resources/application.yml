@@ -6,3 +6,8 @@ eureka:
     registration:
       enabled: true
     defaultZone: ${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}
+---
+micronaut:
+  http:
+    client:
+      read-timeout: 1m
