@@ -1,14 +1,14 @@
 plugins {
-    id "net.ltgt.apt-eclipse" version "0.21"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id "com.diffplug.eclipse.apt" version "3.22.0"
+    id "com.github.johnrengelman.shadow" version "6.0.0"
     id "application"
 }
 
 version "0.1"
 group "example.micronaut"
 
-
 repositories {
+    mavenCentral()
     jcenter()
     maven { url "https://oss.jfrog.org/oss-snapshot-local" }
 }
@@ -20,12 +20,9 @@ configurations {
 
 dependencies {
     annotationProcessor(enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion"))
+    annotationProcessor("io.micronaut:micronaut-graal")
     annotationProcessor("io.micronaut:micronaut-inject-java")
     annotationProcessor("io.micronaut:micronaut-validation")
-    annotationProcessor("io.micronaut:micronaut-graal")
-
-    compileOnly(enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion"))
-    compileOnly("org.graalvm.nativeimage:svm")
 
     implementation(enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion"))
     implementation("io.micronaut:micronaut-inject")
@@ -35,13 +32,18 @@ dependencies {
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-discovery-client")
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
+    compileOnly(platform("io.micronaut:micronaut-bom:$micronautVersion"))
+    compileOnly("org.graalvm.nativeimage:svm")
+
+    runtimeOnly("ch.qos.logback:logback-classic")
 
     testAnnotationProcessor(enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion"))
     testAnnotationProcessor("io.micronaut:micronaut-inject-java")
+
     testImplementation(enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
+
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
@@ -65,9 +67,9 @@ tasks.withType(JavaCompile) {
         '-parameters',
         // enables incremental compilation
         '-Amicronaut.processing.incremental=true',
-        '-Amicronaut.processing.annotations=example.micronaut.*',
-        '-Amicronaut.processing.group=example.micronaut',
-        '-Amicronaut.processing.module=eureka',
+        '-Amicronaut.processing.annotations=example.*',
+        "-Amicronaut.processing.group=$project.group",
+        "-Amicronaut.processing.module=$project.name",
     ])
 }
 
@@ -78,4 +80,11 @@ shadowJar {
 tasks.withType(JavaExec) {
     classpath += configurations.developmentOnly
     jvmArgs('-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+    if (gradle.startParameter.continuous) {
+        systemProperties(
+            'micronaut.io.watch.restart': 'true',
+            'micronaut.io.watch.enabled': 'true',
+            "micronaut.io.watch.paths": "src/main"
+        )
+    }
 }
