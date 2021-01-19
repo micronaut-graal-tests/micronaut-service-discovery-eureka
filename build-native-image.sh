@@ -1,2 +1,4 @@
-./gradlew assemble
-native-image --no-fallback --class-path build/libs/service-discovery-eureka-*-all.jar
+#!/bin/bash
+
+./gradlew nativeImage
+cp build/native-image/service-discovery-eureka .
